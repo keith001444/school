@@ -570,7 +570,7 @@ def get_students_with_balance():
         query = """
             SELECT s.admission_no, s.first_name, s.middle_name, s.last_name, f.remaining_balance
             FROM students s
-            JOIN feesdb.students f ON s.admission_no = f.admission_no
+            JOIN feesdb.students f ON s.admission_no = f.admission_number
             WHERE f.remaining_balance > 0
             ORDER BY f.remaining_balance DESC
         """

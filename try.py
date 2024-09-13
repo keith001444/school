@@ -130,7 +130,7 @@ import sqlite3
 #             conn.close()
 #
 # # Example usage
-# truncate_table('student.db', 'rest')
+# truncate_table('student.db', 'Examinations')
 # database.add_manager('kay','1234')
 # database.setup_database()
 # Function to insert student data and set the initial fee balance
@@ -150,3 +150,14 @@ import sqlite3
 #         print(f"Student {first_name} {last_name} added with a fee balance of {total_fee}.")
 #
 # insert_student('EB3/55555/21', 'John',  'Doe', 50000)
+# data = database.get_students_with_balance()
+# print(data)
+# database.insert_marks('EB3/57373/21',[30,50,77,99,22,66,72,99,23,50])
+# database.insert_time('EB3/57373/21',2024,2,'mid-term')
+# database.insert_marks('EB3/55555/21',[60,34,67,90,45,67,98,66,5,59])
+# database.insert_time('EB3/55555/21',2024,2,'mid-term')
+#
+# database.insert_marks('EB3/57222/21',[30,50,77,99,22,66,72,99,23,50])
+# database.insert_time('EB3/57222/21',2024,2,'mid-term')
+
+# database.add_level('EB3/59843/21','form2')
