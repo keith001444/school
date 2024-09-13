@@ -521,38 +521,56 @@ def view_history():
 @app.route('/download_history', methods=['GET'])
 def download_history():
     admission_number = session.get('admission_no')
+
+    # Fetch payment history
     history = get_payment_history(document_functions.replace_slash_with_slash(admission_number))
 
-    # Generate PDF for payment history in tabular form
+    # Create buffer
     buffer = io.BytesIO()
-    p = canvas.Canvas(buffer)
-    width, height = p._pagesize
 
-    p.drawString(100, height - 50, f"Payment History for Admission Number: {admission_number}")
+    # Create a PDF document using SimpleDocTemplate
+    pdf = SimpleDocTemplate(buffer, pagesize=A4)
 
-    # Draw table headers
-    x_offset = 100
-    y_offset = height - 100
-    p.drawString(x_offset, y_offset, "Amount Paid")
-    p.drawString(x_offset + 150, y_offset, "Remaining Balance")
-    p.drawString(x_offset + 300, y_offset, "Date & Time")
-    y_offset -= 20
+    # Container for the elements in the PDF
+    elements = []
 
-    # Draw table data
+    # Add a title
+    styles = getSampleStyleSheet()
+    title = Paragraph(f"Payment History for Admission Number: {admission_number}", styles['Title'])
+    elements.append(title)
+
+    # Table data (headers)
+    data = [['Amount Paid', 'Remaining Balance', 'Date & Time']]
+
+    # Table data (rows)
     for amount_paid, remaining_balance, date_time in history:
-        p.drawString(x_offset, y_offset, f"sh.{amount_paid}")
-        p.drawString(x_offset + 150, y_offset, f"sh.{remaining_balance} ")
-        p.drawString(x_offset + 300, y_offset, date_time)
-        y_offset -= 20
-        if y_offset < 50:  # Start a new page if the content exceeds the page height
-            p.showPage()
-            y_offset = height - 50
+        data.append([f"sh.{amount_paid}", f"sh.{remaining_balance}", date_time])
 
-    p.showPage()
-    p.save()
+    # Create a table
+    table = Table(data)
 
+    # Apply table style
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header background color
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Header text color
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    # Add table to elements
+    elements.append(table)
+
+    # Build the PDF
+    pdf.build(elements)
+
+    # Return PDF file
     buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name=f"payment_history_{admission_number}.pdf", mimetype='application/pdf')
+    return send_file(buffer, as_attachment=True, download_name=f"payment_history_{admission_number}.pdf",
+                     mimetype='application/pdf')
+
 
 #=====================Delete Student
 def get_db_connection():
