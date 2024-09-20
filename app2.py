@@ -3,6 +3,10 @@ import datetime
 from flask import Flask, render_template, request, redirect,jsonify, flash, url_for, send_from_directory, session, send_file
 import sqlite3, os, database, document_functions, json,requests
 import io
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from requests.auth import HTTPBasicAuth
 from reportlab.pdfgen import canvas
 from datetime import datetime
